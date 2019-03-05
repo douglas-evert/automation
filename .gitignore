@@ -1,0 +1,9 @@
+*Cred*
+*cred*
+
+.terraform
+*.tfstate*
+*.tfvars
+tf.plan
+
+.vagrant
