@@ -1,6 +1,12 @@
 
-provider "aws" {
-  access_key = "${var.aws_access_key}"
-  secret_key = "${var.aws_secret_key}"
-  region     = "us-east-1"
+module "red_hat" {
+  source = "./red_hat"
+
+  instance_ami = "ami-011b3ccf1bd6db744"
+}
+
+module "ubuntu1" {
+  source = "./ubuntu"
+
+  instance_ami = "ami-0ac019f4fcb7cb7e6"
 }

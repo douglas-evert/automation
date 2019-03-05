@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # Variables Section
-$distro = "server-manager"
+$distro = ""
 
 # Scripting Section
 $clone_distro = <<-EOH
@@ -12,8 +12,7 @@ sudo apt install -y apache2 mysql-server php-pear php-fpm php-dev php-zip php-cu
 sudo systemctl restart apache2
 cd /var/www/html/
 git clone https://github.com/douglas-evert/server_manager.git
-ip addr 
-
+ip addr
 EOH
 
 Vagrant.configure("2") do |config|
