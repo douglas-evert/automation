@@ -1,0 +1,7 @@
+users='testing another_user'
+for user in $users
+do
+echo $user
+done
+
+
