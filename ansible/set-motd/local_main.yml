@@ -1,0 +1,12 @@
+- hosts: all
+  connection: local
+  become: yes
+  become_user: root
+  tasks:
+  - name: set motd for redhat
+    include_tasks: ./playbooks/motd_redhat.yml
+    when: ansible_distribution == 'Redhat'
+
+  - name: set motd for ubuntu
+    include_tasks: ./playbooks/motd_ubuntu.yml
+    when: ansible_distribution == 'debian' or ansible_distribution == 'Ubuntu'

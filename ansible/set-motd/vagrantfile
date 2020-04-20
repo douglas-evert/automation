@@ -1,0 +1,21 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "ubuntu" do |ubuntu|   
+    ubuntu.vm.box = "ubuntu/bionic64"
+  
+    ubuntu.vm.provision "ansible_local" do |ansible_u|
+      ansible_u.limit = 'all'
+      ansible_u.inventory_path = 'hosts'
+      ansible_u.playbook = 'local_main.yml'
+    end
+  end
+  config.vm.define "redhat" do |redhat|
+    redhat.vm.box = "centos/7"
+
+    redhat.vm.provision "ansible_local" do |ansible_r|
+      ansible_r.limit = 'all'
+      ansible_r.inventory_path = 'hosts'
+      ansible_r.playbook = 'local_main.yml'
+    end
+  end
+
+end

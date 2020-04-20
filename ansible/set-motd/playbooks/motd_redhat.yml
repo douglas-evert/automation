@@ -1,0 +1,5 @@
+---
+  - name: set up the MOTD
+    copy: 
+      src: ../files/redhat_motd.sh
+      dest: /etc/motd
