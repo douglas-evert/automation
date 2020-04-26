@@ -1,0 +1,8 @@
+---
+  - name: install motd prereq
+    package: 
+      name: 
+        - inxi
+        - screenfetch
+        - ansiweather
+      state: present

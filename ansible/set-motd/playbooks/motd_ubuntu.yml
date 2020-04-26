@@ -2,5 +2,5 @@
   - name: set up the MOTD
     copy: 
       src: ../files/motd_ubuntu.sh
-      dest: /etc/update-motd.d/100-motd
+      dest: /etc/update-motd.d/99-motd
       mode: 0777

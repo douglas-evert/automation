@@ -5,8 +5,12 @@
   tasks:
   - name: set motd for redhat
     include_tasks: ./playbooks/motd_redhat.yml
-    when: ansible_distribution == 'Redhat'
+    when: ansible_os_family == "RedHat"
+
+  - name: install prereqs for ubuntu
+    include_tasks: ./playbooks/ubuntu_prereq.yml
+    when: ansible_os_family == "Debian"
 
   - name: set motd for ubuntu
     include_tasks: ./playbooks/motd_ubuntu.yml
-    when: ansible_distribution == 'debian' or ansible_distribution == 'Ubuntu'
+    when: ansible_os_family == "Debian"

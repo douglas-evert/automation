@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
   config.vm.define "ubuntu" do |ubuntu|   
     ubuntu.vm.box = "ubuntu/bionic64"
-  
+    
     ubuntu.vm.provision "ansible_local" do |ansible_u|
       ansible_u.limit = 'all'
       ansible_u.inventory_path = 'hosts'
@@ -15,6 +15,9 @@ Vagrant.configure("2") do |config|
       ansible_r.limit = 'all'
       ansible_r.inventory_path = 'hosts'
       ansible_r.playbook = 'local_main.yml'
+      ansible_r.extra_vars = {
+        ansible_python_interpreter: "/usr/bin/python"
+      }
     end
   end
 

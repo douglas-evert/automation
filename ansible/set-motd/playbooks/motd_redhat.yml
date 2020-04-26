@@ -2,4 +2,5 @@
   - name: set up the MOTD
     copy: 
       src: ../files/redhat_motd.sh
-      dest: /etc/motd
+      dest: /etc/profile.d/motd.sh
+      mode: 0777
