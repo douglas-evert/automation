@@ -1,0 +1,68 @@
+- name: create vms
+  hosts: localhost
+  vars:  
+    ami: ami-098f16afa9edf40be
+  tasks: 
+  - name: create aws image
+    ec2: 
+      key_name: dougs_key
+      region: us-east-1
+      image: "{{ ami }}"
+      vpc_subnet_id: subnet-052a7e4f
+      group_id: sg-06d63d4a
+      assign_public_ip: yes
+      instance_type: t2.micro
+      wait: yes
+    register: ec2_instance
+
+  - name: add hosts prior to autmation
+    add_host:
+      hostname: "{{ item.public_ip }}"
+      groupname: vms
+    with_items: "{{ ec2_instance.instances }}"
+
+  - name: wait for ssh 
+    local_action:
+      module: wait_for
+      host: "{{ item.public_ip }}"
+      port: 22
+      delay: 10
+      timeout: 120
+    with_items: "{{ ec2_instance.instances }}"
+
+- name: configure VMs
+  hosts: vms
+  vars: 
+    ansible_user: ec2-user
+    ansible_ssh_private_key_file: ./dougs_key.pem
+  become: true
+  gather_facts: true
+  ignore_errors: true
+  tasks: 
+  - name: install docker
+    include_tasks: ./playbooks/install_docker.yml
+    ignore_errors: true
+#  - name: pull docker image
+#    include_tasks: ./playbooks/pull_docker_image.yml
+
+- name: test VMs
+  hosts: vms
+  vars: 
+    ansible_user: ec2-user
+    ansible_ssh_private_key_file: ./dougs_key.pem
+  become: true
+  gather_facts: true
+  ignore_errors: true
+  tasks:
+  - name: test docker install
+    include_tasks: ./test_playbooks/test_docker_install.yml
+    ignore_errors: true
+
+- name: delete instances
+  hosts: localhost
+  tasks:
+    - name: Terminate instances
+      ec2: 
+        state: absent
+        instance_ids: '{{ ec2_instance.instance_ids }}'
+        region: 'us-east-1'

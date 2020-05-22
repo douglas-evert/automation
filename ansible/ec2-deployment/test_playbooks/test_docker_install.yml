@@ -1,0 +1,7 @@
+---
+
+- name: test docker isntall
+  shell: "docker ps -a" 
+  register: output
+  ignore_errors: true
+- debug: msg="{{ output.stdout }}"

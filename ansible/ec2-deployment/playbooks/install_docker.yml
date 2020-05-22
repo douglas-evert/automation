@@ -1,0 +1,14 @@
+---
+
+  - name: install docker
+    package: 
+      name: docker
+      state: present
+    ignore_errors: true
+
+  - name: start docker service
+    service:
+      name: docker
+      enabled: yes
+      state: started
+    ignore_errors: true
