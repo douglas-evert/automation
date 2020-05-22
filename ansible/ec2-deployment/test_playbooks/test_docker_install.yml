@@ -1,7 +1,7 @@
 ---
 
 - name: test docker isntall
-  shell: "docker ps -a" 
+  shell: "sudo docker run hello-world" 
   register: output
   ignore_errors: true
 - debug: msg="{{ output.stdout }}"

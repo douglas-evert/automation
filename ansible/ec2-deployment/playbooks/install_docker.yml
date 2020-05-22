@@ -1,14 +1,30 @@
 ---
+  - name: remove non ce docker
+    package:
+      name: 
+        - docker
+        - docker-common
+        - docker-selinux
+        - docker-engine-selinux
+        - docker-engine
+        - docker-ce
+      state: absent
 
+  - name: add docker-ce repo
+    get_url:
+      url: https://download.docker.com/linux/centos/docker-ce.repo
+      dest: /etc/yum.repos.d/docker-ce.repo
+  
   - name: install docker
-    package: 
-      name: docker
+    yum: 
+      name: docker-ce
       state: present
+      update_cache: yes
     ignore_errors: true
 
   - name: start docker service
     service:
-      name: docker
+      name: docker.service
       enabled: yes
       state: started
     ignore_errors: true

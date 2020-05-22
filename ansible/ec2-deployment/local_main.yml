@@ -1,0 +1,10 @@
+- hosts: all
+  connection: local
+  become: yes
+  become_user: root
+  tasks:
+  - name: install docker
+    include_tasks: ./playbooks/install_docker.yml
+
+  - name: test docker
+    include_tasks: ./test_playbooks/test_docker_install.yml
