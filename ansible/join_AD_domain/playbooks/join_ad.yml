@@ -1,0 +1,44 @@
+---
+ 
+  - name: install pre-req
+    package: 
+      name: 
+        - realmd
+        - sssd
+        - samba-common-tools
+        - python-pip
+      state: present
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Check if machine is bound
+    shell: /bin/bash -c "realm list | grep sssd"
+    register: realmd_bound
+    ignore_errors: true
+
+  - name: install pexpect for expect module
+    pip:
+      name: pexpect
+  
+  - name: join the domain
+    vars:
+      domain: test-domain.local
+      bind_user: administrator
+      bind_password: Testing1@3
+    expect:
+       command: /bin/bash -c "/usr/sbin/realm join {{ domain }} -U {{ bind_user }} "
+       responses: 
+         Password for *: "{{ bind_password }}"
+    when: realmd_bound is failed
+
+  - name: add users to sudo
+    vars:
+      additional_admin_group: testing
+    lineinfile: 
+      dest: /etc/sudoers
+      line: "%{{ item.admin_group }}    ALL=(ALL)    NOPASSWD: ALL"
+    with_items: 
+      - "{{ admin_group: 'domain\ admins' }}"
+      - "{{ admin_group: '{{ additional_admin_group }}' }}"
+    when: realmd_bound is failed
+
+    

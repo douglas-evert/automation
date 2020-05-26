@@ -1,0 +1,15 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "redhat" do |redhat|
+    redhat.vm.box = "centos/7"
+    redhat.vm.network :public_network, :bridge => "eno: Wi-Fi (Wireless)"
+    redhat.vm.provision "ansible_local" do |ansible_r|
+      ansible_r.limit = 'all'
+      ansible_r.inventory_path = 'hosts'
+      ansible_r.playbook = 'local_main.yml'
+      ansible_r.extra_vars = {
+        ansible_python_interpreter: "/usr/bin/python"
+      }
+    end
+  end
+
+end
