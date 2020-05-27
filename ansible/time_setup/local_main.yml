@@ -1,0 +1,20 @@
+- hosts: all
+  connection: local
+  become: yes
+  become_user: root
+  vars:
+    time_server: "time.time.something"
+  tasks:
+  - name: install python selinux packages incase of selinux
+    yum: 
+      name: libselinux-python
+      state: present
+    when: ansible_facts['os_family'] == "RedHat" 
+    
+  - name: install prereqs for ubuntu
+    include_tasks: ./playbooks/configure_ntp.yml
+    when: (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] <= "6")
+
+  - name: set motd for ubuntu
+    include_tasks: ./playbooks/configure_chrony.yml
+    when: (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] >= "7")

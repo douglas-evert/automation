@@ -1,0 +1,25 @@
+---
+  - name: install chronyd if missing
+    yum:
+      name: chrony
+      state: present
+  
+  - name: disable ntp if running
+    service:
+      name: ntpd
+      state: stopped
+      enabled: false
+    ignore_errors: true
+
+  - name: configure chronyd
+    lineinfile:
+      line: "server {{ time_server }}"
+      dest: /etc/chrony.conf
+
+  - name: start and enable chronyd
+    service: 
+      name: chronyd
+      state: started
+      enabled: yes
+
+      

@@ -1,0 +1,17 @@
+---
+  - name: install ntp if missing
+    yum:
+      name: ntp
+      state: present
+  
+  - name: configure ntp
+    lineinfile:
+      line: "server {{ time_server }}"
+      dest: /etc/ntp.conf
+
+  - name: start and enable chronyd
+    service: 
+      name: ntpd
+      state: started
+      enabled: yes
+      
