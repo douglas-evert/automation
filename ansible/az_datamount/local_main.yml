@@ -1,0 +1,59 @@
+- hosts: all
+  connection: local
+  become: yes
+  become_user: root
+  vars_prompt:
+    - name: smb_secret
+      prompt: "What is your Azure Secret"
+      private: yes
+      when: smb_secret == ""
+  vars: 
+    account_name: "default"
+    share_name: "default"
+
+  tasks: 
+  - name: create repo file
+    template:
+      src: ./files/azure_repo.repo.j2
+      dest: /etc/yum.repos.d/azure-cli.repo
+    when: ansible_facts['os_family'] == "RedHat"
+  - name: install azure cli
+    yum:
+      name: azure-cli
+      update_cache: yes
+      state: present
+    when: ansible_facts['os_family'] == "RedHat"
+  - name: install az cli on Ubuntu / Debian
+    shell: |
+      curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      touch /root/az_cli_installed
+    args: 
+      creates: /root/az_cli_installed
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: install cifs prereq
+    package: 
+      name: cifs-utils
+      state: present
+
+  - name: create mount point
+    file:
+      dest: "/mnt/{{ account_name }}/{{ share_name }}"
+      state: directory
+  
+  - name: create credentials file
+    template:
+      src: ./files/smbcredentials.j2
+      dest: /etc/smbcredentials
+      mode: 600
+
+  - name: create mount point
+    mount:
+      path: "/mnt/{{ account_name }}/{{ share_name }}"
+      src: "//{{ account_name }}.file.core.windows.net/{{ share_name }}"
+      opts: nofail,vers=3.0,credentials=/etc/smbcredentials,serverino,dir_mode=700,file_mode=700
+  
+  - name: run az cli install tests
+    include_tasks: ./test_playbooks/test_install.yml
+
+  
