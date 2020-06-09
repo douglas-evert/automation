@@ -7,11 +7,11 @@
       prompt: "What is your Azure Secret"
       private: yes
       when: smb_secret == ""
-  vars: 
+  vars:
     account_name: "default"
     share_name: "default"
 
-  tasks: 
+  tasks:
   - name: create repo file
     template:
       src: ./files/azure_repo.repo.j2
@@ -27,12 +27,12 @@
     shell: |
       curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
       touch /root/az_cli_installed
-    args: 
+    args:
       creates: /root/az_cli_installed
     when: ansible_facts['os_family'] == "Debian"
 
   - name: install cifs prereq
-    package: 
+    package:
       name: cifs-utils
       state: present
 
@@ -40,20 +40,20 @@
     file:
       dest: "/mnt/{{ account_name }}/{{ share_name }}"
       state: directory
-  
+
   - name: create credentials file
     template:
       src: ./files/smbcredentials.j2
       dest: /etc/smbcredentials
-      mode: 600
+      mode: 0600
 
   - name: create mount point
     mount:
       path: "/mnt/{{ account_name }}/{{ share_name }}"
       src: "//{{ account_name }}.file.core.windows.net/{{ share_name }}"
       opts: nofail,vers=3.0,credentials=/etc/smbcredentials,serverino,dir_mode=700,file_mode=700
-  
+      state: present
+
   - name: run az cli install tests
     include_tasks: ./test_playbooks/test_install.yml
 
-  

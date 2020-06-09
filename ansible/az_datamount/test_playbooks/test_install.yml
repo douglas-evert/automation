@@ -1,6 +1,6 @@
 ---
   - name: test Azure CLI install
-    shell: "az --version" 
+    shell: "az --version"
     register: output
     ignore_errors: true
   - debug: msg="{{ output.stdout }}"

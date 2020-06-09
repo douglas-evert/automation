@@ -1,0 +1,24 @@
+- hosts: all
+  connection: local
+  become: yes
+  become_user: root
+  tasks:
+  - name: gather facts
+    setup:
+    register: old_facts
+
+  - name: upgrade kernel
+    yum:
+      name: kernel
+      state: latest
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name:
+    reboot:
+
+  - name:
+    setup:
+    register: new_facts
+
+  - debug:
+      msg: "Report {{ new_facts.ansible_facts['ansible_fqdn'] }} old Kernel = {{ old_facts.ansible_facts['ansible_kernel'] }} new Kernel= {{ new_facts.ansible_facts['ansible_kernel'] }}"
