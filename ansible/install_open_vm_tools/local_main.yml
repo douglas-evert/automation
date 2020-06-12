@@ -1,0 +1,41 @@
+- hosts: all
+  connection: local
+  become: yes
+  become_user: root
+  tasks:
+
+  - name: configure epel repo
+    yum_repository:
+      name: epel
+      description: EPEL YUM repo
+      baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+      state: present
+
+  - name: install open-vm-tools
+    yum:
+      name: open-vm-tools
+      state: present
+      update_cache: yes
+
+  - name: disable epel
+    yum_repository:
+      name: epel
+      state: absent
+
+  - name: yum-clean-metadata
+    command: yum clean metadata
+    args:
+      warn: no
+
+  - name: check for install
+    service:
+      name: vmtoolsd
+      enabled: yes
+      state: started
+
+  - name: check vmtoolsd status
+    command: "chkconfig --list vmtoolsd"
+    register: vmtoolsd_status
+
+  - debug:
+      msg: "{{ vmtoolsd_status.stdout }}"
